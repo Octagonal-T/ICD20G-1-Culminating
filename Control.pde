@@ -5,15 +5,18 @@ public class Control{
   int size;
   boolean reversed;
 
-  double jumpTarget;
-  double jumpVelocity;
-  final double gravityIncrement = 0.3;
+  float jumpTarget;
+  float jumpVelocity;
+  final float gravityIncrement = 0.3;
   boolean jumping = false;
+  float groundY = 0;
 
+  int colour;
   Control otherControl;
 
   PImage[] images;
-  public Control(int colour, int x, int y, int size){ //colour, 0 = red, 1 = blue
+  public Control(int colour, int x, int y, int size){ //colour, 0 = red, 1 = blue (too lazy to make an enum)
+    this.colour = colour;
     images = new PImage[2];
     if(colour == 0){
       images[0] = loadImage("./assets/red.jpg");
@@ -47,6 +50,7 @@ public class Control{
       if(checkCollision(3)){
         this.jumpVelocity+=this.gravityIncrement;
         this.y += this.jumpVelocity;
+        if(!checkCollision(3)) this.y = this.groundY;
       }
     }
     render();
@@ -60,16 +64,23 @@ public class Control{
     }
   }
 
-  private boolean checkCollision(int boundary){ //2 = top, 3 = bottom, -1 = left, 1 = right
+  private boolean checkCollision(int boundary){ //2 = top, 3 = bottom, -1 = left, 1 = right (too lazy to make an enum)
     if(boundary == 2){
 
-    }else if(boundary == 3){
-      boolean checkY = (this.y + this.size > otherControl.getPos()[1] || this.y < otherControl.getPos()[1] + this.size);
-      System.out.println(this.y + this.size > otherControl.getPos()[1]);
-      if(!checkY){
-        checkY = (this.x > otherControl.getPos()[0] + this.size || this.x < otherControl.getPos()[0]);
+    }else if(boundary == 3){ //return true if not on ground or another object
+      if(this.y < otherControl.getPos()[1] + this.size && this.y > otherControl.getPos()[1]-this.size){
+        if(this.x < otherControl.getPos()[0]+this.size && this.x > otherControl.getPos()[0]-this.size){
+          if(this.y < otherControl.getPos()[1]){
+            this.groundY = otherControl.getPos()[1] - this.size;
+            System.out.println(colour + " " + this.groundY);
+            return false;
+          }
+        }
       }
-      return this.y < height - this.size && checkY;
+      boolean atGround = this.y < height - this.size;
+      if(!atGround) this.groundY = height - this.size;
+      
+      return atGround;
     }else if(boundary == -1){
       boolean checkX = (this.x > otherControl.getPos()[0] + this.size || this.x < otherControl.getPos()[0]);
       boolean checkY = (this.y > otherControl.getPos()[1] + this.size || this.y < otherControl.getPos()[1]-this.size);
@@ -101,7 +112,7 @@ public class Control{
   public int getDirection(){
     return this.direction;
   }
-  public double[] getPos(){
-    return new double[] {this.x, this.y};
+  public float[] getPos(){
+    return new float[] {this.x, this.y};
   }
 }
