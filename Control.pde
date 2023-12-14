@@ -42,11 +42,12 @@ public class Control{
     }
     
 
-    if(jumping){
+    if(jumping && checkCollision(2)){
       double error = this.jumpTarget - this.y;
       this.y += error * 0.2;
       if(Math.abs(error) < 0.5) jumping = false;
     }else{
+      jumping = false;
       if(checkCollision(3)){
         this.jumpVelocity+=this.gravityIncrement;
         this.y += this.jumpVelocity;
@@ -64,15 +65,23 @@ public class Control{
     }
   }
 
+
+  //this method is very confusing, my bad
   private boolean checkCollision(int boundary){ //2 = top, 3 = bottom, -1 = left, 1 = right (too lazy to make an enum)
     if(boundary == 2){
-
+      if(this.y <= otherControl.getPos()[1] + this.size && this.y >= otherControl.getPos()[1]-this.size){
+        if(this.x < otherControl.getPos()[0]+this.size && this.x > otherControl.getPos()[0]-this.size){
+          if(this.y >= otherControl.getPos()[1]){
+            return false;
+          }
+        }
+      }
+      return this.y > 0;
     }else if(boundary == 3){ //return true if not on ground or another object
-      if(this.y < otherControl.getPos()[1] + this.size && this.y > otherControl.getPos()[1]-this.size){
+      if(this.y <= otherControl.getPos()[1] + this.size && this.y >= otherControl.getPos()[1]-this.size){
         if(this.x < otherControl.getPos()[0]+this.size && this.x > otherControl.getPos()[0]-this.size){
           if(this.y < otherControl.getPos()[1]){
             this.groundY = otherControl.getPos()[1] - this.size;
-            System.out.println(colour + " " + this.groundY);
             return false;
           }
         }
@@ -83,13 +92,13 @@ public class Control{
       return atGround;
     }else if(boundary == -1){
       boolean checkX = (this.x > otherControl.getPos()[0] + this.size || this.x < otherControl.getPos()[0]);
-      boolean checkY = (this.y > otherControl.getPos()[1] + this.size || this.y < otherControl.getPos()[1]-this.size);
+      boolean checkY = (this.y >= otherControl.getPos()[1] + this.size || this.y <= otherControl.getPos()[1]-this.size);
       if(!checkX) checkX = checkY;
       return this.x > 0 && checkX; 
       //insert check with walls
     }else if(boundary == 1){
       boolean checkX = (this.x > otherControl.getPos()[0] || this.x < otherControl.getPos()[0] - this.size);
-      boolean checkY = (this.y > otherControl.getPos()[1] + this.size || this.y < otherControl.getPos()[1]-this.size);
+      boolean checkY = (this.y >= otherControl.getPos()[1] + this.size || this.y <= otherControl.getPos()[1]-this.size);
       if(!checkX) checkX = checkY;
 
       //insert check with walls
@@ -114,5 +123,9 @@ public class Control{
   }
   public float[] getPos(){
     return new float[] {this.x, this.y};
+  }
+  public void setPos(int[] pos){
+    this.x = pos[0];
+    this.y = pos[1];
   }
 }

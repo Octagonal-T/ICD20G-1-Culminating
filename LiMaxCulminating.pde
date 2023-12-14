@@ -12,9 +12,9 @@ int stage = 0; //0 = menu select, 1 = playing, 2 = paused, 3 = dead
 int selector = 1;
 
 //GLOBAL OBJECT VARIABLES
-LevelHandler level;
 Control red;
 Control blue;
+LevelHandler level;
 
 void setup(){
   size(1000, 900);
