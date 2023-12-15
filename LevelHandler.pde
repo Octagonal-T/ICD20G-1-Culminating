@@ -5,7 +5,7 @@ public class LevelHandler{
   int[][] startingPos = new int[2][2];
   int[][] endingPos = new int[2][2];
 
-  ArrayList<Integer[][]> walls = new ArrayList<Integer[][]>();
+  ArrayList<int[][]> walls = new ArrayList<int[][]>();
   ArrayList<String> doors = new ArrayList<String>(); 
   ArrayList<String> levers = new ArrayList<String>(); 
   ArrayList<String> buttons = new ArrayList<String>();
@@ -64,15 +64,21 @@ public class LevelHandler{
             wall[j][h] = wallPoint.getInt(h);
           }
         }
-        System.out.println(i);
         fill(0);
-        rect(wall[0][0], wall[0][1], wall[1][0] - wall[0][0], wall[1][1] - wall[0][1]);
+        walls.add(wall);
       }else{
         break;
       }
     }
   }
   public void update(){
-    // background(255);
+    background(255);
+    for(int[][] wall : walls){
+      rect(wall[0][0], wall[0][1], wall[1][0] - wall[0][0], wall[1][1] - wall[0][1]);
+    }
+  }
+
+  public ArrayList<int[][]> getWalls(){
+    return walls;
   }
 }

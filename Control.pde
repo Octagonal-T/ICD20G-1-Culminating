@@ -67,7 +67,9 @@ public class Control{
 
 
   //this method is very confusing, my bad
+  //i made this very convoluted, will try and make more efficient if possible
   private boolean checkCollision(int boundary){ //2 = top, 3 = bottom, -1 = left, 1 = right (too lazy to make an enum)
+    ArrayList<int[][]> walls = level.getWalls();
     if(boundary == 2){
       if(this.y < otherControl.getPos()[1] + this.size && this.y > otherControl.getPos()[1]-this.size){
         if(this.x < otherControl.getPos()[0]+this.size && this.x > otherControl.getPos()[0]-this.size){
@@ -86,6 +88,16 @@ public class Control{
           }
         }
       }
+      for(int[][] wall : walls){
+        int yPos = wall[0][1];
+        int xPos = wall[0][0];
+        if(this.y >= yPos - this.size && this.y <= wall[1][1]){
+          if(this.x >= xPos - this.size && this.x <= wall[1][0]){
+            this.groundY = yPos - this.size;
+            return false;
+          }
+        }
+      }
       boolean atGround = this.y < height - this.size;
       if(!atGround) this.groundY = height - this.size;
       
@@ -93,6 +105,15 @@ public class Control{
     }else if(boundary == -1){
       boolean checkX = (this.x >= otherControl.getPos()[0] + this.size || this.x <= otherControl.getPos()[0]);
       boolean checkY = (this.y >= otherControl.getPos()[1] + this.size || this.y <= otherControl.getPos()[1]-this.size);
+      for(int[][] wall : walls){
+        int yPos = wall[0][1];
+        int xPos = wall[0][0];
+        if(this.x <= wall[1][0]&& this.x >= xPos){
+          if(this.y > yPos -this.size && this.y < wall[1][1]){
+            return false;
+          }
+        }
+      }
       if(!checkX) checkX = checkY;
       return this.x > 0 && checkX; 
       //insert check with walls
@@ -100,7 +121,15 @@ public class Control{
       boolean checkX = (this.x >= otherControl.getPos()[0] || this.x <= otherControl.getPos()[0] - this.size);
       boolean checkY = (this.y >= otherControl.getPos()[1] + this.size || this.y <= otherControl.getPos()[1]-this.size);
       if(!checkX) checkX = checkY;
-
+      for(int[][] wall : walls){
+        int yPos = wall[0][1];
+        int xPos = wall[0][0];
+        if(this.x <= wall[1][0]&& this.x >= xPos - this.size){
+          if(this.y > yPos -this.size && this.y < wall[1][1]){
+            return false;
+          }
+        }
+      }
       //insert check with walls
       return this.x < width - this.size && checkX; 
     }
