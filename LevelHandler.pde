@@ -5,6 +5,8 @@ public class LevelHandler{
   int[][] startingPos = new int[2][2];
   int[][] endingPos = new int[2][2];
 
+  int[] doorHeight = {-80, -80};
+ 
   ArrayList<int[][]> walls = new ArrayList<int[][]>();
   ArrayList<String> doors = new ArrayList<String>(); 
   ArrayList<String> levers = new ArrayList<String>(); 
@@ -42,12 +44,12 @@ public class LevelHandler{
     red.setPos(startingPos[0]);
     blue.setPos(startingPos[1]);
 
-    reader = createReader("./levels/" + level + "/walls.json");
+    reader = createReader("./levels/" + level + "/walls.json"); 
     JSONArray wallsJSON;
     try{
-      wallsJSON = parseJSONObject(reader.readLine()).getJSONArray("walls");
-    }catch(IOException e){
-      wallsJSON = null;
+      wallsJSON = parseJSONObject(reader.readLine()).getJSONArray("walls"); //returns a 3d array lol
+    }catch(IOException e){ //only throws ioexception if file not found, but will still throw it if it's not in a try catch lmao
+      wallsJSON = null; 
     }
     for(int i = 0; true; i++){
       JSONArray wallJSON;
@@ -73,11 +75,50 @@ public class LevelHandler{
   }
   public void update(){
     background(255);
+    fill(0);
     for(int[][] wall : walls){
       rect(wall[0][0], wall[0][1], wall[1][0] - wall[0][0], wall[1][1] - wall[0][1]);
     }
+
+    for(int i = 0; i<2; i++){
+      int[] endPos = endingPos[i];
+      float[] pos = i == 0 ? red.getPos() : blue.getPos();
+      if(i == 1){
+        fill(0, 0, 255);
+      }else fill(255, 0, 0);
+      boolean flag = false;
+      if(pos[0] <= endPos[0] + 50 && pos[0] >= endPos[0] - 50){
+        if(pos[1] <= endPos[1] && endPos[1] >= pos[1] - 55){
+          flag = true;
+          doorHeight[i] += 0.1;
+        }
+      }
+      if(!flag && doorHeight[i] != -80) {
+        doorHeight[i] -= 1;
+      }
+      rect(endPos[0], endPos[1], 50, doorHeight[i]);
+    }
+
+
+    for(int i = 0; i<2; i++){
+      int[] endPos = endingPos[i];
+      if(i == 1){
+        fill(30, 70, 155);
+      }else fill(204, 65, 37);
+      beginShape();
+      vertex(endPos[0]-25, endPos[1]);
+      vertex(endPos[0]-25, endPos[1]-80);
+      vertex(endPos[0]+75, endPos[1]-80);
+      vertex(endPos[0]+75, endPos[1]);
+      vertex(endPos[0]+50, endPos[1]);
+      vertex(endPos[0]+50, endPos[1]-55);
+      vertex(endPos[0], endPos[1]-55);
+      vertex(endPos[0], endPos[1]);
+      endShape();
+    }
   }
 
+  //GETTERS AND SETTERS
   public ArrayList<int[][]> getWalls(){
     return walls;
   }

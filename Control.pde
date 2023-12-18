@@ -78,10 +78,19 @@ public class Control{
           }
         }
       }
+      for(int[][] wall : walls){
+        int yPos = wall[0][1];
+        int xPos = wall[0][0];
+        if(this.y >= yPos && this.y <= wall[1][1]){
+          if(this.x > xPos - this.size && this.x < wall[1][0]){
+            return false;
+          }
+        }
+      }
       return this.y > 0;
     }else if(boundary == 3){ //return true if not on ground or another object
       if(this.y <= otherControl.getPos()[1] + this.size && this.y >= otherControl.getPos()[1]-this.size){
-        if(this.x <= otherControl.getPos()[0]+this.size && this.x >= otherControl.getPos()[0]-this.size){
+        if(this.x < otherControl.getPos()[0]+this.size && this.x > otherControl.getPos()[0]-this.size){
           if(this.y <= otherControl.getPos()[1]){
             this.groundY = otherControl.getPos()[1] - this.size;
             return false;
@@ -91,8 +100,8 @@ public class Control{
       for(int[][] wall : walls){
         int yPos = wall[0][1];
         int xPos = wall[0][0];
-        if(this.y >= yPos - this.size && this.y <= wall[1][1]){
-          if(this.x >= xPos - this.size && this.x <= wall[1][0]){
+        if(this.y >= yPos - this.size && this.y <= yPos){
+          if(this.x > xPos - this.size && this.x < wall[1][0]){
             this.groundY = yPos - this.size;
             return false;
           }
@@ -108,7 +117,7 @@ public class Control{
       for(int[][] wall : walls){
         int yPos = wall[0][1];
         int xPos = wall[0][0];
-        if(this.x <= wall[1][0]&& this.x >= xPos){
+        if(this.x <= wall[1][0]&& this.x > xPos){
           if(this.y > yPos -this.size && this.y < wall[1][1]){
             return false;
           }
@@ -124,7 +133,7 @@ public class Control{
       for(int[][] wall : walls){
         int yPos = wall[0][1];
         int xPos = wall[0][0];
-        if(this.x <= wall[1][0]&& this.x >= xPos - this.size){
+        if(this.x >= xPos - this.size && this.x < wall[1][0]){
           if(this.y > yPos -this.size && this.y < wall[1][1]){
             return false;
           }
@@ -143,7 +152,7 @@ public class Control{
       this.jumpTarget = this.y - 100;
       this.jumpVelocity = 2;
     }
-  }
+  } 
   public void setDirection(int dir){
     this.direction = dir;
   }
