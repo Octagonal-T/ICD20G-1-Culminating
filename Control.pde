@@ -4,6 +4,9 @@ public class Control{
   float y;
   int size;
   boolean reversed;
+  boolean dying = false;
+  float[][] dyingCubes =  new float[10][3];
+  int dyingFrames = 0;
 
   float jumpTarget;
   float jumpVelocity;
@@ -33,28 +36,41 @@ public class Control{
   }
   
   void update(){
-    if(this.direction == -1 && checkCollision(-1)){
-      this.reversed = true;
-      this.x -=5;
-    }else if(this.direction == 1 && checkCollision(1)){
-      this.reversed = false;
-      this.x +=5;
-    }
-    
-
-    if(jumping && checkCollision(2)){
-      double error = this.jumpTarget - this.y;
-      this.y += error * 0.2;
-      if(Math.abs(error) < 0.5) jumping = false;
+    if(!dying){
+      if(this.direction == -1 && checkCollision(-1)){
+        this.reversed = true;
+        this.x -=5;
+      }else if(this.direction == 1 && checkCollision(1)){
+        this.reversed = false;
+        this.x +=5;
+      }
+      
+      if(jumping && checkCollision(2)){
+        double error = this.jumpTarget - this.y;
+        this.y += error * 0.2;
+        if(Math.abs(error) < 0.5) jumping = false;
+      }else{
+        jumping = false;
+        if(checkCollision(3)){
+          this.jumpVelocity+=this.gravityIncrement;
+          this.y += this.jumpVelocity;
+          if(!checkCollision(3)) this.y = this.groundY;
+        }
+      }
+      render();
     }else{
-      jumping = false;
-      if(checkCollision(3)){
-        this.jumpVelocity+=this.gravityIncrement;
-        this.y += this.jumpVelocity;
-        if(!checkCollision(3)) this.y = this.groundY;
+      dyingFrames++;
+      if(dyingFrames == 100) stage++;
+      else{
+        for(int i = 0; i<dyingCubes.length; i++){
+          if(colour == 1){
+            fill(0, 0, 255);
+          }else fill(255, 0, 0);
+          rect(dyingCubes[i][0], dyingCubes[i][1], 10, 10);
+          dyingCubes[i][1] += dyingCubes[i][2];
+        }
       }
     }
-    render();
   }
 
   private void render(){
@@ -153,6 +169,16 @@ public class Control{
       this.jumpVelocity = 2;
     }
   } 
+  public void die(){
+    this.dyingFrames = 0;
+    this.dying = true;
+    for(int i=0; i<dyingCubes.length; i++){
+      dyingCubes[i] = new float[]{random(this.x, this.x + 50), random(this.y, this.y + 50), random(2, 10)};
+    }
+  }
+  public boolean isDying(){
+    return this.dying;
+  }
   public void setDirection(int dir){
     this.direction = dir;
   }
@@ -163,6 +189,7 @@ public class Control{
     return new float[] {this.x, this.y};
   }
   public void setPos(int[] pos){
+    this.dying = false;
     this.x = pos[0];
     this.y = pos[1];
   }

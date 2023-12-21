@@ -5,9 +5,10 @@ public class LevelHandler{
   int[][] startingPos = new int[2][2];
   int[][] endingPos = new int[2][2];
 
-  int[] doorHeight = {-80, -80};
+  int[] doorHeight = {-55, -55};
  
   ArrayList<int[][]> walls = new ArrayList<int[][]>();
+  ArrayList<int[][]> spikes = new ArrayList<int[][]>();
   ArrayList<String> doors = new ArrayList<String>(); 
   ArrayList<String> levers = new ArrayList<String>(); 
   ArrayList<String> buttons = new ArrayList<String>();
@@ -72,12 +73,46 @@ public class LevelHandler{
         break;
       }
     }
+
+        reader = createReader("./levels/" + level + "/spikes.json"); 
+    JSONArray spikesJSON;
+    try{
+      spikesJSON = parseJSONObject(reader.readLine()).getJSONArray("spikes"); //returns a 3d array lol
+    }catch(IOException e){ //only throws ioexception if file not found, but will still throw it if it's not in a try catch lmao
+      spikesJSON = null; 
+    }
+    for(int i = 0; true; i++){
+      JSONArray spikeJSON;
+      try{
+        spikeJSON = spikesJSON.getJSONArray(i);
+      }catch(RuntimeException e){
+        break;
+      }
+      if(spikeJSON != null){
+        int[][] spike = new int[2][2];
+        for(int j = 0; j<2; j++){
+          JSONArray spikePoint = spikeJSON.getJSONArray(j);
+          for(int h = 0; h<2; h++){
+            spike[j][h] = spikePoint.getInt(h);
+          }
+        }
+        fill(0);
+        spikes.add(spike);
+      }else{
+        break;
+      }
+    }
   }
   public void update(){
     background(255);
     fill(0);
     for(int[][] wall : walls){
       rect(wall[0][0], wall[0][1], wall[1][0] - wall[0][0], wall[1][1] - wall[0][1]);
+    }
+    fill(123,252,18);
+    noStroke();
+    for(int[][] spike : spikes){
+      rect(spike[0][0], spike[0][1], spike[1][0] - spike[0][0], spike[1][1] - spike[0][1]);
     }
 
     for(int i = 0; i<2; i++){
@@ -88,18 +123,16 @@ public class LevelHandler{
       }else fill(255, 0, 0);
       boolean flag = false;
       if(pos[0] <= endPos[0] + 50 && pos[0] >= endPos[0] - 50){
-        if(pos[1] <= endPos[1] && endPos[1] >= pos[1] - 55){
+        if(pos[1] <= endPos[1] && pos[1] >= endPos[1] - 55){
           flag = true;
           doorHeight[i] += 0.1;
         }
       }
-      if(!flag && doorHeight[i] != -80) {
+      if(!flag && doorHeight[i] != -55) {
         doorHeight[i] -= 1;
       }
       rect(endPos[0], endPos[1], 50, doorHeight[i]);
     }
-
-
     for(int i = 0; i<2; i++){
       int[] endPos = endingPos[i];
       if(i == 1){
@@ -115,6 +148,16 @@ public class LevelHandler{
       vertex(endPos[0], endPos[1]-55);
       vertex(endPos[0], endPos[1]);
       endShape();
+    }
+
+    for(int[][] spike : spikes){
+      for(int i = 0; i<2; i++){
+        Control cube = i == 0 ? red : blue;
+        float[] pos = cube.getPos();
+        if(pos[0] < spike[1][0] && pos[0] > spike[0][0] - 50 && pos[1] < spike[1][1] && pos[1] > spike[0][1] - 50 && !cube.isDying()){
+          cube.die();
+        }
+      }
     }
   }
 
