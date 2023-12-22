@@ -149,7 +149,9 @@ public class LevelHandler{
       vertex(endPos[0], endPos[1]);
       endShape();
     }
-
+    if(doorHeight[0] == 0 && doorHeight[1] == 0) {
+      stage = 6;
+    }
     for(int[][] spike : spikes){
       for(int i = 0; i<2; i++){
         Control cube = i == 0 ? red : blue;
