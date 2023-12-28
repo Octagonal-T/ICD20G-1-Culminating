@@ -134,6 +134,8 @@ void draw(){
       menuSpriteBlue.resize(100, 100);
       menuSpriteRed.resize(100, 100);
       level = new LevelHandler(levelNum);
+      red.setDirection(0);
+      blue.setDirection(0);
       red.otherControl = blue;
       blue.otherControl = red;
       stage++;
@@ -154,7 +156,7 @@ void draw(){
     if(closeTransition()) stage = 0;
   }else if(stage == 6){ //next level
     if(closeTransition()){
-      // levelNum++;
+      levelNum++;
       if(levelNum == 100) stage = 8; //CHANGE TO LAST LEVEL, change to end stage
       else{
         level = new LevelHandler(levelNum);

@@ -125,7 +125,6 @@ public class Control{
       }
       boolean atGround = this.y < height - this.size;
       if(!atGround) this.groundY = height - this.size;
-      
       return atGround;
     }else if(boundary == -1){
       boolean checkX = (this.x >= otherControl.getPos()[0] + this.size || this.x <= otherControl.getPos()[0]);

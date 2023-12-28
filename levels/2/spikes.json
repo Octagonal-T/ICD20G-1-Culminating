@@ -1,0 +1,14 @@
+{"spikes": [[[0, 850], [1000, 900]]]}
+//3d array:
+/*
+[
+  [ spike 1
+    [x, y], of top right corner
+    [x, y] of bottom left corner
+  ],
+  [ spike 2
+    [x, y], of top right corner
+    [x, y] of bottom left corner
+  ]
+]
+*/

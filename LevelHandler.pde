@@ -74,7 +74,7 @@ public class LevelHandler{
       }
     }
 
-        reader = createReader("./levels/" + level + "/spikes.json"); 
+    reader = createReader("./levels/" + level + "/spikes.json"); 
     JSONArray spikesJSON;
     try{
       spikesJSON = parseJSONObject(reader.readLine()).getJSONArray("spikes"); //returns a 3d array lol
