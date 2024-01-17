@@ -1,0 +1,17 @@
+{"doors": [{"coordinates": [500, 800], "height": 75, "width": 20, "direction": 1}]}
+/*
+{
+  "doors":
+    [
+      {
+        "coordiantes":
+          [
+
+          ],
+        "height": num
+        "width": num
+        "direction": num 1 = down 2 = up
+      }
+    ]
+}
+*/

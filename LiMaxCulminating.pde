@@ -8,8 +8,9 @@
 //=======================================
 
 //GAME STAGE VARIABLES
-int stage = 0; //0 = menu select, 1 = playing, 2 = paused, 3 = dead
-int levelNum = 1;
+
+int stage = 0; //
+int levelNum = 1; //TO SKIP FORWARD, JUST CHANGE LEVEL TO DESIRED LEVEL.
 int selector = 0;
 
 //menu screen variables
@@ -59,6 +60,7 @@ void setup(){
 
 
 void draw(){
+  // System.out.println(mouseX + " " + mouseY);
   if(stage == 0){
     float error = 130 - menuSpriteRedX;
     double velocity = error * 0.12; 
@@ -140,9 +142,7 @@ void draw(){
       blue.otherControl = red;
       stage++;
     }
-  }else if(stage == 3){ //using if statement cuz i prefer its syntax (switch case is ugly)
-    //the Nth index of the sequence = (n)*(n + 1)/2
-    //triangle numbers sequence
+  }else if(stage == 3){
     level.update();
     red.update();
     blue.update();
@@ -184,6 +184,9 @@ void keyPressed(){
       case 'w':
         red.jump();
         break;
+      case 'e':
+        level.addArrow(new Arrow(red.getPos()[0]+25, red.getPos()[1], !red.getReversed()));
+        break;
     }
     switch(keyCode){
       case RIGHT:
@@ -195,6 +198,8 @@ void keyPressed(){
       case UP:
         blue.jump();
         break;
+      case SHIFT:
+        level.addArrow(new Arrow(blue.getPos()[0]+25, blue.getPos()[1], !blue.getReversed()));
     }
   }else if(stage == 2){
     

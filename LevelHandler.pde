@@ -9,10 +9,9 @@ public class LevelHandler{
  
   ArrayList<int[][]> walls = new ArrayList<int[][]>();
   ArrayList<int[][]> spikes = new ArrayList<int[][]>();
-  ArrayList<String> doors = new ArrayList<String>(); 
-  ArrayList<String> levers = new ArrayList<String>(); 
-  ArrayList<String> buttons = new ArrayList<String>();
-  ArrayList<String> targets = new ArrayList<String>();
+  ArrayList<Door> doors = new ArrayList<Door>(); 
+  ArrayList<int[]> targets = new ArrayList<int[]>();
+  ArrayList<Arrow> arrows = new ArrayList<Arrow>();
 
   public LevelHandler(int level){ //LEVEL LOADER
 
@@ -102,6 +101,48 @@ public class LevelHandler{
         break;
       }
     }
+
+    reader = createReader("./levels/" + level + "/doors.json"); 
+    JSONArray doorsJSON;
+    try{
+      doorsJSON = parseJSONObject(reader.readLine()).getJSONArray("doors");
+    }catch(IOException e){ //only throws ioexception if file not found, but will still throw it if it's not in a try catch lmao
+      doorsJSON = null; 
+    }
+    for(int i = 0; true; i++){
+      JSONObject doorJSON = new JSONObject();
+      try{
+        doorJSON = doorsJSON.getJSONObject(i);
+      }catch(RuntimeException e){
+        break;
+      }
+      if(doorJSON != null){
+        doors.add(new Door(doorJSON));
+      }else{
+        break;
+      }
+    }
+
+    reader = createReader("./levels/" + level + "/targets.json"); 
+    JSONArray targetsJSON;
+    try{
+      targetsJSON = parseJSONObject(reader.readLine()).getJSONArray("targets");
+    }catch(IOException e){ //only throws ioexception if file not found, but will still throw it if it's not in a try catch lmao
+      targetsJSON = null; 
+    }
+    for(int i = 0; true; i++){
+      JSONArray targetJSON = new JSONArray();
+      try{
+        targetJSON = targetsJSON.getJSONArray(i);
+      }catch(RuntimeException e){
+        break;
+      }
+      if(targetJSON != null){
+        targets.add(new int[] {targetJSON.getInt(0), targetJSON.getInt(1)});
+      }else{
+        break;
+      }
+    }
   }
   public void update(){
     background(255);
@@ -113,6 +154,13 @@ public class LevelHandler{
     noStroke();
     for(int[][] spike : spikes){
       rect(spike[0][0], spike[0][1], spike[1][0] - spike[0][0], spike[1][1] - spike[0][1]);
+      for(int i = 0; i<2; i++){
+        Control cube = i == 0 ? red : blue;
+        float[] pos = cube.getPos();
+        if(pos[0] < spike[1][0] && pos[0] > spike[0][0] - 50 && pos[1] < spike[1][1] && pos[1] > spike[0][1] - 50 && !cube.isDying()){
+          cube.die();
+        }
+      }
     }
 
     for(int i = 0; i<2; i++){
@@ -152,19 +200,29 @@ public class LevelHandler{
     if(doorHeight[0] == 0 && doorHeight[1] == 0) {
       stage = 6;
     }
-    for(int[][] spike : spikes){
-      for(int i = 0; i<2; i++){
-        Control cube = i == 0 ? red : blue;
-        float[] pos = cube.getPos();
-        if(pos[0] < spike[1][0] && pos[0] > spike[0][0] - 50 && pos[1] < spike[1][1] && pos[1] > spike[0][1] - 50 && !cube.isDying()){
-          cube.die();
-        }
-      }
+    for(Door door : doors){
+      door.render();
+    }
+    for(int[] target : targets){
+      fill(0);
+      rect(target[0], target[1], 10, 50);
+    }
+    for(Arrow arrow : arrows){
+      arrow.update();
     }
   }
 
   //GETTERS AND SETTERS
   public ArrayList<int[][]> getWalls(){
     return walls;
+  }
+  public ArrayList<Door> getDoors(){
+    return doors;
+  }
+  public ArrayList<Arrow> getArrows(){
+    return arrows;
+  }
+  public void addArrow(Arrow arrow){
+    arrows.add(arrow);
   }
 }

@@ -48,13 +48,17 @@ public class Control{
       if(jumping && checkCollision(2)){
         double error = this.jumpTarget - this.y;
         this.y += error * 0.2;
+        this.jumpVelocity = 0;
         if(Math.abs(error) < 0.5) jumping = false;
       }else{
         jumping = false;
         if(checkCollision(3)){
           this.jumpVelocity+=this.gravityIncrement;
           this.y += this.jumpVelocity;
-          if(!checkCollision(3)) this.y = this.groundY;
+          if(!checkCollision(3)) {
+            this.y = this.groundY;
+            this.jumpVelocity = 0;
+          }
         }
       }
       render();
@@ -86,6 +90,7 @@ public class Control{
   //i made this very convoluted, will try and make more efficient if possible
   private boolean checkCollision(int boundary){ //2 = top, 3 = bottom, -1 = left, 1 = right (too lazy to make an enum)
     ArrayList<int[][]> walls = level.getWalls();
+    ArrayList<Door> doors = level.getDoors();
     if(boundary == 2){
       if(this.y < otherControl.getPos()[1] + this.size && this.y > otherControl.getPos()[1]-this.size){
         if(this.x < otherControl.getPos()[0]+this.size && this.x > otherControl.getPos()[0]-this.size){
@@ -99,6 +104,16 @@ public class Control{
         int xPos = wall[0][0];
         if(this.y >= yPos && this.y <= wall[1][1]){
           if(this.x > xPos - this.size && this.x < wall[1][0]){
+            return false;
+          }
+        }
+      }
+      for(Door doorObj : doors){
+        int[][] door = doorObj.getCoords();
+        int yPos = door[0][1];
+        int xPos = door[0][0];
+        if(this.y >= yPos && this.y <= door[1][1]){
+          if(this.x > xPos - this.size && this.x < door[1][0]){
             return false;
           }
         }
@@ -123,6 +138,17 @@ public class Control{
           }
         }
       }
+      for(Door doorObj : doors){
+        int[][] door = doorObj.getCoords();
+        int yPos = door[0][1];
+        int xPos = door[0][0];
+        if(this.y >= yPos - this.size && this.y <= yPos){
+          if(this.x > xPos - this.size && this.x < door[1][0]){
+            this.groundY = yPos - this.size;
+            return false;
+          }
+        }
+      }
       boolean atGround = this.y < height - this.size;
       if(!atGround) this.groundY = height - this.size;
       return atGround;
@@ -138,9 +164,18 @@ public class Control{
           }
         }
       }
+      for(Door doorObj: doors){
+        int[][] door = doorObj.getCoords();
+        int yPos = door[0][1];
+        int xPos = door[0][0];
+        if(this.x <= door[1][0]&& this.x > xPos){
+          if(this.y > yPos -this.size && this.y < door[1][1]){
+            return false;
+          }
+        }
+      }
       if(!checkX) checkX = checkY;
       return this.x > 0 && checkX; 
-      //insert check with walls
     }else if(boundary == 1){
       boolean checkX = (this.x >= otherControl.getPos()[0] || this.x <= otherControl.getPos()[0] - this.size);
       boolean checkY = (this.y >= otherControl.getPos()[1] + this.size || this.y <= otherControl.getPos()[1]-this.size);
@@ -154,7 +189,16 @@ public class Control{
           }
         }
       }
-      //insert check with walls
+      for(Door doorObj : doors){
+        int[][] door = doorObj.getCoords();
+        int yPos = door[0][1];
+        int xPos = door[0][0];
+        if(this.x >= xPos - this.size && this.x < door[1][0]){
+          if(this.y > yPos -this.size && this.y < door[1][1]){
+            return false;
+          }
+        }
+      }
       return this.x < width - this.size && checkX; 
     }
     return true;
@@ -183,6 +227,9 @@ public class Control{
   }
   public int getDirection(){
     return this.direction;
+  }
+  public boolean getReversed(){
+    return this.reversed;
   }
   public float[] getPos(){
     return new float[] {this.x, this.y};
