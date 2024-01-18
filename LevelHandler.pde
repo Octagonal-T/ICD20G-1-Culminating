@@ -7,6 +7,8 @@ public class LevelHandler{
 
   int[] doorHeight = {-55, -55};
  
+  int level;
+
   ArrayList<int[][]> walls = new ArrayList<int[][]>();
   ArrayList<int[][]> spikes = new ArrayList<int[][]>();
   ArrayList<Door> doors = new ArrayList<Door>(); 
@@ -14,7 +16,7 @@ public class LevelHandler{
   ArrayList<Arrow> arrows = new ArrayList<Arrow>();
 
   public LevelHandler(int level){ //LEVEL LOADER
-
+    this.level = level;
     //parse level data file
     reader = createReader("./levels/" + level + "/levelData.json");
     JSONObject levelDataJSON;
@@ -224,5 +226,8 @@ public class LevelHandler{
   }
   public void addArrow(Arrow arrow){
     arrows.add(arrow);
+  }
+  public ArrayList<int[]> getTargets(){
+    return targets;
   }
 }

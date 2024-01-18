@@ -91,9 +91,10 @@ public class Control{
   private boolean checkCollision(int boundary){ //2 = top, 3 = bottom, -1 = left, 1 = right (too lazy to make an enum)
     ArrayList<int[][]> walls = level.getWalls();
     ArrayList<Door> doors = level.getDoors();
+
     if(boundary == 2){
       if(this.y < otherControl.getPos()[1] + this.size && this.y > otherControl.getPos()[1]-this.size){
-        if(this.x < otherControl.getPos()[0]+this.size && this.x > otherControl.getPos()[0]-this.size){
+        if(this.x < otherControl.getPos()[0] + this.size && this.x > otherControl.getPos()[0]-this.size){
           if(this.y > otherControl.getPos()[1]){
             return false;
           }

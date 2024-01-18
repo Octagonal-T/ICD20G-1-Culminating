@@ -10,7 +10,7 @@
 //GAME STAGE VARIABLES
 
 int stage = 0; //
-int levelNum = 1; //TO SKIP FORWARD, JUST CHANGE LEVEL TO DESIRED LEVEL.
+int levelNum = 3; //TO SKIP FORWARD, JUST CHANGE LEVEL TO DESIRED LEVEL.
 int selector = 0;
 
 //menu screen variables
@@ -165,7 +165,10 @@ void draw(){
     }
   }else if(stage == 7){ //delay stage
     delayTimer++;
-    if(delayTimer == 50) stage = 3;
+    if(delayTimer == 50){
+      stage = 3;
+      delayTimer = 0;
+    }
   }
 }
 

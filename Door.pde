@@ -19,10 +19,10 @@ public class Door{
   public void render(){
     if(state == 2){
       if(direction == 1){
-        x+=2;
-        yLength-=2;
+        y+=1;
+        yLength-=1;
       }else{
-        yLength-=2;
+        yLength-=1;
       }
       if(yLength < 0) state = 1;
     }else if(state == 3){
