@@ -4,7 +4,7 @@ public class Door{
   int xLength;
   int yLength;
   int direction;
-  int state; //state machine: 0: closed, 1: opened, 2: opening, 3: closing
+  int state; //state machine: 0: closed, 1: opened, 2: opening
   public Door(JSONObject data){
     x = data.getJSONArray("coordinates").getInt(0);
     y = data.getJSONArray("coordinates").getInt(1);
@@ -14,7 +14,7 @@ public class Door{
     state = 0;
   }
   public void open(){
-    if(state == 0 || state == 3) state = 2;
+    if(state == 0) state = 2;
   }
   public void render(){
     if(state == 2){
@@ -25,8 +25,6 @@ public class Door{
         yLength-=1;
       }
       if(yLength < 0) state = 1;
-    }else if(state == 3){
-
     }
     fill(0);
     rect(x, y, xLength, yLength);

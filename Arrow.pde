@@ -134,6 +134,15 @@ public class Arrow{
           }
         }
       }
+      for(int[] target : targets){
+        int i = targets.indexOf(target);
+        if(pointSide[1] >= target[1] && pointSide[1] <= target[1] + 50){
+          if(pointTop[0] >= target[0] && pointTop[0] <= target[0]+10){
+            doors.get(i).open();
+            return false;
+          }
+        }
+      }
     }
     if(pointSide[0] <= 0 || pointSide[0] >= width) return false;
     if(pointTop[1] <= 0 || pointTop[1] >= height) return false;
