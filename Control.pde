@@ -119,7 +119,7 @@ public class Control{
           }
         }
       }
-      return this.y > 0;
+      return true;
     }else if(boundary == 3){ //return true if not on ground or another object
       if(this.y <= otherControl.getPos()[1] + this.size && this.y >= otherControl.getPos()[1]-this.size){
         if(this.x < otherControl.getPos()[0]+this.size && this.x > otherControl.getPos()[0]-this.size){
@@ -214,8 +214,10 @@ public class Control{
     }
   } 
   public void die(){
+    playerDie.play();
     this.dyingFrames = 0;
     this.dying = true;
+    this.jumpVelocity = 0;
     for(int i=0; i<dyingCubes.length; i++){
       dyingCubes[i] = new float[]{random(this.x, this.x + 50), random(this.y, this.y + 50), random(2, 10)};
     }

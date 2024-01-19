@@ -208,6 +208,8 @@ public class LevelHandler{
     for(int[] target : targets){
       fill(0);
       rect(target[0], target[1], 10, 50);
+      fill(255, 0, 0);
+      rect(target[0]+2, target[1]+10, 6, 30);
     }
     for(Arrow arrow : arrows){
       arrow.update();

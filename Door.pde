@@ -14,6 +14,7 @@ public class Door{
     state = 0;
   }
   public void open(){
+    arrowHit.play();
     if(state == 0) state = 2;
   }
   public void render(){
