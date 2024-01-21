@@ -1,4 +1,4 @@
-{"doors": [{"coordinates": [500, 800], "height": 75, "width": 20, "direction": 2}]}
+{"doors": [{"coordinates": [450, 800], "height": 100, "width": 20, "direction": 2}, {"coordinates": [530, 800], "height": 100, "width": 20, "direction": 2}]}
 /*
 {
   "doors":

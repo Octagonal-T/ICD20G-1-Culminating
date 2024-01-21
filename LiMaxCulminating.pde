@@ -19,6 +19,24 @@
 // - Arrow rotational matrices: got some really cool math to calculate the location of the verticies of the arrow when its rotated
 //=======================================
 
+//=======================================
+//CONTROLS:
+//
+//WAD - RED PLAYER MOVEMENT
+//ARROW KEYS - BLUE PLAYER MOVEMENT
+//S - RED PLAYER SHOOT
+//DOWN - BLUE PLAYER SHOOT
+//=======================================
+
+//=======================================
+//HOW TO PLAY:
+//
+// Jump on platforms and avoid the green goo to try and get to your coloured door!
+// Shoot arrows at targets to toggle doors!
+//=======================================
+
+//(level designs are really boring, sorry lol)
+
 import processing.sound.*;
 
 //GAME STAGE VARIABLES
@@ -37,8 +55,6 @@ PImage beginButton;
 PImage beginButtonInversed;
 PImage exitButton;
 PImage exitButtonInversed;
-PImage howtoplayButton;
-PImage howtoplayButtonInversed;
 PImage youWon;
 PImage youWonInversed;
 int delayTimer = 0;
@@ -77,10 +93,6 @@ void setup(){
   exitButton.resize(300, 75);
   exitButtonInversed = loadImage("./assets/exitButtonInversed.png");
   exitButtonInversed.resize(300, 75);
-  howtoplayButton = loadImage("./assets/howtoplayButton.png");
-  howtoplayButton.resize(300, 75);
-  howtoplayButtonInversed = loadImage("./assets/howtoplayButtonInversed.png");
-  howtoplayButtonInversed.resize(300, 75);
   youWonInversed = loadImage("./assets/youWonInverse.png");
   youWonInversed.resize(600, 150);
   youWon = loadImage("./assets/youWon.png");
@@ -94,7 +106,6 @@ void setup(){
 
 
 void draw(){
-  // System.out.println(mouseX + " " + mouseY);
   if(stage == 0 || stage == 8){ //entering menu stage
     float error = 130 - menuSpriteRedX; //create a P loop for the two characters coming into the screen
     //set kP to 0.12. this makes the velocity at which the characters come into the screen slow down as they get closer to their target
@@ -122,11 +133,10 @@ void draw(){
     fill(0);
     //if mouse is hovering over restart and hovering over exit
     boolean hoverRestart = (mouseX > width/2-150 && mouseX < width/2+ 150) && (mouseY > 350 && mouseY < 425);
-    boolean hoverHowtoplay = (mouseX > width/2-150 && mouseX < width/2 + 150) && (mouseY > 450 && mouseY < 525);
-    boolean hoverExit = (mouseX > width/2-150 && mouseX < width/2+ 150) && (mouseY > 550 && mouseY < 625);
+    boolean hoverExit = (mouseX > width/2-150 && mouseX < width/2+ 150) && (mouseY > 450 && mouseY < 525);
 
     //if mouse is hovering over the buttons, change cursor type
-    if(hoverExit || hoverRestart || hoverHowtoplay) cursor(HAND);
+    if(hoverExit || hoverRestart) cursor(HAND);
     else cursor(ARROW);
     //if highlight restart, make button inverse green
     if(hoverRestart){
@@ -135,17 +145,11 @@ void draw(){
     }else{
       image(beginButton, width/2-150, 350);
     }
-    //if highlighting how to play, make button inverse blue
-    if(hoverHowtoplay){
-      image(howtoplayButtonInversed, width/2-150, 450);
-    }else{
-      image(howtoplayButton, width/2-150, 450);
-    }
     //if highlighting exit, make button inverse red
     if(hoverExit){
-      image(exitButtonInversed, width/2-150, 550);
+      image(exitButtonInversed, width/2-150, 450);
     }else{
-      image(exitButton, width/2-150, 550);
+      image(exitButton, width/2-150, 450);
     }
     
     //if mouse pressed, begin
@@ -201,7 +205,7 @@ void draw(){
   }else if(stage == 6){ //next level transition stage
     if(closeTransition()){ //close transition, once its finished,
       levelNum++;
-      if(levelNum == 2) stage = 8; //CHANGE TO LAST LEVEL, change to end stage
+      if(levelNum == 4) stage = 8; //if this was the last level, change to end stage
       else{ //if this was not the last level, go to next level
         level = new LevelHandler(levelNum);
         stage++;
@@ -215,61 +219,60 @@ void draw(){
     }
   }else if(stage == 9){
     tick++;
-    background(0);
+    background(0); //sprites enter the screen
     image(menuSpriteBlue, menuSpriteBlueX, 800);
     image(menuSpriteRed, menuSpriteRedX, 800);
     image(title, 228,titleY);
+    //every 30 ticks the you won button will flash
     image(Math.floor(tick / 30) % 2 == 0 ? youWon : youWonInversed,width/2-275, 350);
   }
 }
 
-void keyPressed(){
-  char keyChar = Character.toLowerCase(key);
-  if(stage == 0){
-
-  }else if(stage == 4){
+void keyPressed(){ //on keypressed
+  char keyChar = Character.toLowerCase(key); //set the key charcter to lowercase (caps lock preventive measure)
+  if(stage == 4){ //if this is during the gameplay stage
     switch (keyChar) {
-      case 'a':
+      case 'a': //if a, set red to go left
         red.setDirection(-1);
         break;
-      case 'd':
+      case 'd': //if d, set red to go right
         red.setDirection(1);
         break;
-      case 'w':
+      case 'w': //if w, tell red to jump
         red.jump();
         break;
-      case 'e':
+      case 's': //if s, create a new arrow
         arrowFire.play();
         level.addArrow(new Arrow(red.getPos()[0]+25, red.getPos()[1], !red.getReversed()));
         break;
     }
     switch(keyCode){
-      case RIGHT:
+      case RIGHT: //if right, set blue to go right
         blue.setDirection(1);
         break;
-      case LEFT:
+      case LEFT: //if left, set blue to go left
         blue.setDirection(-1);
         break;
-      case UP:
+      case UP: //if up, tell blue to jump
         blue.jump();
         break;
-      case SHIFT:
+      case DOWN: //if down, create a new arrow
         arrowFire.play();
         level.addArrow(new Arrow(blue.getPos()[0]+25, blue.getPos()[1], !blue.getReversed()));
         break;
     }
-  }else if(stage == 2){
-    
   }
 }
 
-void keyReleased() {
-  if(stage == 4){
+void keyReleased() { //on keyreleased
+  if(stage == 4){ //if stage is gameplay stage
     if ((Character.toLowerCase(key) == 'a' && red.getDirection() == -1) || (Character.toLowerCase(key) == 'd' && red.getDirection() == 1)) {
-      red.setDirection(0);
+    //if key is a and red is going to the left, or if key is d and red is going to the right,  
+      red.setDirection(0); //stop the character
     }
     if ((keyCode == RIGHT && blue.getDirection() == 1) || (keyCode == LEFT && blue.getDirection() == -1)){
-      blue.setDirection(0);
+    //if key is right and blue is going to the right, or if key is left and red is going to the left,  
+      blue.setDirection(0); //stop the character
     }
   }
 }
